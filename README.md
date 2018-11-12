@@ -1,4 +1,4 @@
-# stackdemo
+# 2 Tier local VM stack Demo
 ## Overview
 A quick self contained demo of a 2 tier (web/data) application utilising the following components:
 + Centos 7
