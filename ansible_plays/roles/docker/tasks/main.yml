@@ -1,8 +1,9 @@
 ---
 # tasks file for roles/docker
 
-- debug:
-  msg: "Initial test of ansible role/docker"
+- name: Debug msg
+  debug:
+    msg: "Initial test of ansible role/docker"
 
 - name: Create debug file if role/docker executes
   file:
