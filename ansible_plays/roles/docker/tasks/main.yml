@@ -1,2 +1,10 @@
 ---
 # tasks file for roles/docker
+
+- debug:
+  msg: "Initial test of ansible role/docker"
+
+- name: Create debug file if role/docker executes
+  file:
+    path: "/tmp/ansible_role_docker_tasks_executed"
+    state: touch
