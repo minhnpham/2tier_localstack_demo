@@ -7,8 +7,8 @@ Vagrant.configure("2") do |config|
   end
 
   # Executes the Ansible playbook to provision the entire tech stack
-  config.vm.provision "ansible_local" do |ansible|
-    ansible.playbook = "ansible_plays/site.yml"
+  config.vm.provision "ansible_local", run: "always" do |ansible|
+    ansible.playbook = "ansible_plays/site.yml"    
   end
 
   # Port forward guest VM ports to local host ports
