@@ -5,3 +5,22 @@
   debug:
     msg: "START execution of role/mongodb"
 
+- name: Create db data dir on host system
+  file:
+    path: "{{ mongodb_paths.host_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Create docker network
+  docker_network:
+    name: "{{ docker_network_name }}"
+
+- name: Create Mongodb container and connect to network
+  docker_container:
+    name: mongodb
+    image: "{{ image }}"
+    pull: yes
+    networks:
+      - name: "{{ docker_network_name }}"
+    volumes:
+      - "{{ mongodb_paths.host_dir }}:{{ mongodb_paths.container_dir }}"

@@ -10,3 +10,4 @@
   
   roles:
     - roles/docker
+    - roles/mongodb
