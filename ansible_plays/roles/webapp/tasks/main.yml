@@ -4,3 +4,20 @@
 - name: START Role webapp
   debug:
     msg: "START execution of role/webapp"
+
+- name: Install Git
+  yum:
+    name: "git"
+    state: "installed"
+    update_cache: "yes"
+
+- name: Create webapp source code dir
+  file:
+    path: "{{ webapp_src_checkout_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Checkout webapp source code
+  git:
+    repo: "{{ webapp_src_repo }}"
+    dest: "{{ webapp_src_checkout_dir }}"

@@ -1,7 +1,5 @@
 ---
 # defaults file for roles/webapp
 
-# image: "mongo:4"
-# mongodb_paths:
-#   host_dir: "/data/mongodb"
-#   container_dir: "/data/db"
+webapp_src_repo: "https://github.com/minhnpham/meanauthapp.git"
+webapp_src_checkout_dir: "/src/webapp"
