@@ -11,3 +11,4 @@
   roles:
     - roles/docker
     - roles/mongodb
+    - roles/webapp

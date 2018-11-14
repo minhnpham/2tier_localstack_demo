@@ -1,0 +1,7 @@
+---
+# defaults file for roles/webapp
+
+# image: "mongo:4"
+# mongodb_paths:
+#   host_dir: "/data/mongodb"
+#   container_dir: "/data/db"

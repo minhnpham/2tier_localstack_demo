@@ -1,0 +1,6 @@
+---
+# tasks file for roles/webapp
+
+- name: START Role webapp
+  debug:
+    msg: "START execution of role/webapp"
