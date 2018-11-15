@@ -3,3 +3,4 @@
 
 webapp_src_repo: "https://github.com/minhnpham/meanauthapp.git"
 webapp_src_checkout_dir: "/src/webapp"
+webapp_runtime_dir: "/app/webapp"
