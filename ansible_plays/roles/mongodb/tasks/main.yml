@@ -22,5 +22,7 @@
     pull: yes
     networks:
       - name: "{{ docker_network_name }}"
+    exposed:
+      - 27017  
     volumes:
       - "{{ mongodb_paths.host_dir }}:{{ mongodb_paths.container_dir }}"
