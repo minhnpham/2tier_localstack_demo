@@ -81,14 +81,14 @@
     name: "{{ docker_images.webappfrontend }}"
     path: "{{ webapp_paths.frontend_runtime_dir }}"
 
-- name: Create nodejs container and load the webapp frontend
-  docker_container:
-    name: "{{ docker_hosts.meanauthappfrontend }}"
-    image: "{{ docker_images.webappfrontend }}"
-    hostname: "{{ docker_hosts.meanauthappfrontend }}"
-    networks:
-      - name: "{{ docker_network_name }}"
-    expose:
-      - 8080
-    ports:
-      - "8080:4200"
+# - name: Create nodejs container and load the webapp frontend
+#   docker_container:
+#     name: "{{ docker_hosts.meanauthappfrontend }}"
+#     image: "{{ docker_images.webappfrontend }}"
+#     hostname: "{{ docker_hosts.meanauthappfrontend }}"
+#     networks:
+#       - name: "{{ docker_network_name }}"
+#     expose:
+#       - 8080
+#     ports:
+#       - "8080:4200"
