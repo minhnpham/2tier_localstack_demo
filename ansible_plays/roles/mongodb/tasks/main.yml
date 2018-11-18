@@ -18,8 +18,9 @@
 - name: Create Mongodb container and connect to network
   docker_container:
     name: "{{ docker_hosts.mongodb }}"
-    image: "{{ image }}"
+    image: "{{ image }}"    
     pull: yes
+    hostname: "{{ docker_hosts.mongodb }}"
     networks:
       - name: "{{ docker_network_name }}"
     expose:

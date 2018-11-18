@@ -13,11 +13,82 @@
 
 - name: Create webapp source code dir
   file:
-    path: "{{ webapp_src_checkout_dir }}"
+    path: "{{ webapp_paths.src_checkout_dir }}"
     state: directory
     mode: 0755
 
 - name: Checkout webapp source code
   git:
     repo: "{{ webapp_src_repo }}"
-    dest: "{{ webapp_src_checkout_dir }}"
+    dest: "{{ webapp_paths.src_checkout_dir }}"
+
+- name: Create webapp runtime dir
+  file:
+    path: "{{ webapp_paths.meanauthapp_runtime_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Sync webapp src to runtime dir
+  synchronize:
+    src: "{{ webapp_paths.src_checkout_dir }}/"
+    dest: "{{ webapp_paths.meanauthapp_runtime_dir }}"
+
+- name: Process webapp config templates
+  template:
+    src: database.js.j2
+    dest: "{{ webapp_paths.meanauthapp_runtime_dir }}/config/database.js"
+  
+- name: Build webapp docker image
+  docker_image:
+    name: "{{ docker_images.webapp }}"
+    path: "{{ webapp_paths.meanauthapp_runtime_dir }}"
+
+- name: Create nodejs container and load the webapp
+  docker_container:
+    name: "{{ docker_hosts.meanauthapp }}"
+    image: "{{ docker_images.webapp }}"
+    hostname: "{{ docker_hosts.meanauthapp }}"
+    networks:
+      - name: "{{ docker_network_name }}"
+    expose:
+      - 3000
+    ports:
+      - "3000:3000"
+    # volumes:
+    #   - "{{ webapp_paths.meanauthapp_runtime_dir }}:{{ webapp_paths.meanauthapp_runtime_dir }}"
+    # working_dir: "{{ webapp_paths.meanauthapp_runtime_dir }}"
+
+# --------------------------------
+
+- name: Create webapp frontend runtime dir
+  file:
+    path: "{{ webapp_paths.frontend_runtime_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Sync webappfrontend src to runtime dir
+  synchronize:
+    src: "{{ webapp_paths.src_checkout_dir }}/angular-src/"
+    dest: "{{ webapp_paths.frontend_runtime_dir }}"
+
+- name: Process webapp frontend config templates
+  template:
+    src: auth.services.ts.j2
+    dest: "{{ webapp_paths.frontend_runtime_dir }}/src/app/services/auth.services.ts"
+  
+- name: Build webapp frontend docker image
+  docker_image:
+    name: "{{ docker_images.webappfrontend }}"
+    path: "{{ webapp_paths.frontend_runtime_dir }}"
+
+- name: Create nodejs container and load the webapp frontend
+  docker_container:
+    name: "{{ docker_hosts.meanauthappfrontend }}"
+    image: "{{ docker_images.webappfrontend }}"
+    hostname: "{{ docker_hosts.meanauthappfrontend }}"
+    networks:
+      - name: "{{ docker_network_name }}"
+    expose:
+      - 8080
+    ports:
+      - "8080:4200"

@@ -2,5 +2,11 @@
 # defaults file for roles/webapp
 
 webapp_src_repo: "https://github.com/minhnpham/meanauthapp.git"
-webapp_src_checkout_dir: "/src/webapp"
-webapp_runtime_dir: "/app/webapp"
+webapp_paths:
+  src_checkout_dir: "/src/webapp"
+  meanauthapp_runtime_dir: "/opt/meanauthapp"
+  frontend_runtime_dir: "/opt/meanauthfrontend"
+docker_images:
+  nodejs: "node:6"
+  webapp: "meanauthapp"
+  webappfrontend: "meanauthappfrontend"

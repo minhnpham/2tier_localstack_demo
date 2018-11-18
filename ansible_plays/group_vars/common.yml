@@ -4,4 +4,4 @@ docker_network_name: "mydocker-net"
 docker_hosts:
   mongodb: "mymongodb"
   meanauthapp: "meanauthapp"
-  meanauthfrontend: "meanauthfrontend"
+  meanauthappfrontend: "meanauthappfrontend"
