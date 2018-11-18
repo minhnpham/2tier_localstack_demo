@@ -17,12 +17,12 @@
 
 - name: Create Mongodb container and connect to network
   docker_container:
-    name: mongodb
+    name: "{{ docker_hosts.mongodb }}"
     image: "{{ image }}"
     pull: yes
     networks:
       - name: "{{ docker_network_name }}"
-    exposed:
-      - 27017  
+    expose:
+      - 27017
     volumes:
       - "{{ mongodb_paths.host_dir }}:{{ mongodb_paths.container_dir }}"
