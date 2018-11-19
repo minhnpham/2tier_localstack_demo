@@ -75,11 +75,30 @@
   template:
     src: auth.services.ts.j2
     dest: "{{ webapp_paths.frontend_runtime_dir }}/src/app/services/auth.services.ts"
-  
-- name: Build webapp frontend docker image
-  docker_image:
-    name: "{{ docker_images.webappfrontend }}"
-    path: "{{ webapp_paths.frontend_runtime_dir }}"
+
+- name: Install NodeJS and build tools
+  yum:
+    name: "{{ packages }}"
+    state: "installed"
+    update_cache: "yes"
+  vars:
+    packages:
+    - epel-release
+    - gcc
+    - c++
+    - make
+    - nodejs
+
+- name: Install Angular CLI
+  npm:
+    name: "@angular/cli"
+    global: yes
+    state: present
+
+# - name: Build webapp frontend docker image
+#   docker_image:
+#     name: "{{ docker_images.webappfrontend }}"
+#     path: "{{ webapp_paths.frontend_runtime_dir }}"
 
 # - name: Create nodejs container and load the webapp frontend
 #   docker_container:
