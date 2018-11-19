@@ -25,6 +25,8 @@ The following automation steps will be performed on the VM:
 5. Clone/Pull web application source code
 6. Configure/Update web application runtime environment variables
 7. Provision a NodeJS docker container and deploy/start the web application inside the container
+8. Build/Bundle Angular frontend code
+9. Provision a nginx docker container with frontend code
 
 NOTE: For demonstration purposes, one of my bootstrap NodeJS web application will be used for the web application source.
 [MEAN Stack User Authentication Boostrap App](https://github.com/minhnpham/meanauthapp)
@@ -39,3 +41,5 @@ NOTE: For demonstration purposes, one of my bootstrap NodeJS web application wil
 
 
 ## TODO
+1. Bundle Angular frontend code
+2. Provision nginx and deploy frontend code
