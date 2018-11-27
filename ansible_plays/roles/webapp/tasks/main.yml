@@ -84,7 +84,7 @@
     dest: "{{ webapp_paths.src_checkout_dir }}/angular-src/src/app/services/auth.services.ts"
 
 - name: Build and Bundle Angular code
-  shell: npm install && ng build --prod --aot=false --output-path dist
+  shell: npm install && ng build --prod --output-path dist
   args:
     chdir: "{{ webapp_paths.src_checkout_dir }}/angular-src/"
 
@@ -99,21 +99,16 @@
     src: "{{ webapp_paths.src_checkout_dir }}/angular-src/dist/"
     dest: "{{ webapp_paths.frontend_runtime_dir }}"
 
-
-
-# - name: Build webapp frontend docker image
-#   docker_image:
-#     name: "{{ docker_images.webappfrontend }}"
-#     path: "{{ webapp_paths.frontend_runtime_dir }}"
-
-# - name: Create nodejs container and load the webapp frontend
-#   docker_container:
-#     name: "{{ docker_hosts.meanauthappfrontend }}"
-#     image: "{{ docker_images.webappfrontend }}"
-#     hostname: "{{ docker_hosts.meanauthappfrontend }}"
-#     networks:
-#       - name: "{{ docker_network_name }}"
-#     expose:
-#       - 8080
-#     ports:
-#       - "8080:4200"
+- name: Start nginx container and mount the webapp frontend
+  docker_container:
+    name: "{{ docker_hosts.meanauthappfrontend }}"
+    image: "{{ docker_images.nginx }}"
+    hostname: "{{ docker_hosts.meanauthappfrontend }}"
+    networks:
+      - name: "{{ docker_network_name }}"
+    expose:
+      - 80
+    ports:
+      - "8080:80"
+    volumes:
+      - "{{ webapp_paths.frontend_runtime_dir }}:/usr/share/nginx/html:ro"      

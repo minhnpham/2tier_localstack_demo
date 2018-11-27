@@ -8,5 +8,6 @@ webapp_paths:
   frontend_runtime_dir: "/opt/meanauthfrontend"
 docker_images:
   nodejs: "node:6"
+  nginx: "nginx:1.15"
   webapp: "meanauthapp"
   webappfrontend: "meanauthappfrontend"
