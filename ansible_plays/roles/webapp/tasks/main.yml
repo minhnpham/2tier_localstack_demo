@@ -85,7 +85,7 @@
     packages:
     - epel-release
     - gcc
-    - c++
+    - gcc-c++
     - make
     - nodejs
 
