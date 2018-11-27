@@ -59,23 +59,6 @@
     # working_dir: "{{ webapp_paths.meanauthapp_runtime_dir }}"
 
 # --------------------------------
-
-- name: Create webapp frontend runtime dir
-  file:
-    path: "{{ webapp_paths.frontend_runtime_dir }}"
-    state: directory
-    mode: 0755
-
-- name: Sync webappfrontend src to runtime dir
-  synchronize:
-    src: "{{ webapp_paths.src_checkout_dir }}/angular-src/"
-    dest: "{{ webapp_paths.frontend_runtime_dir }}"
-
-- name: Process webapp frontend config templates
-  template:
-    src: auth.services.ts.j2
-    dest: "{{ webapp_paths.frontend_runtime_dir }}/src/app/services/auth.services.ts"
-
 - name: Install NodeJS and build tools
   yum:
     name: "{{ packages }}"
@@ -91,9 +74,32 @@
 
 - name: Install Angular CLI
   npm:
-    name: "@angular/cli"
+    name: "@angular/cli@1.7.4"
     global: yes
     state: present
+
+- name: Process webapp frontend config templates
+  template:
+    src: auth.services.ts.j2
+    dest: "{{ webapp_paths.src_checkout_dir }}/angular-src/src/app/services/auth.services.ts"
+
+- name: Build and Bundle Angular code
+  shell: npm install && ng build --prod --aot=false --output-path dist
+  args:
+    chdir: "{{ webapp_paths.src_checkout_dir }}/angular-src/"
+
+- name: Create webapp frontend runtime dir
+  file:
+    path: "{{ webapp_paths.frontend_runtime_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Sync webappfrontend dist to runtime dir
+  synchronize:
+    src: "{{ webapp_paths.src_checkout_dir }}/angular-src/dist/"
+    dest: "{{ webapp_paths.frontend_runtime_dir }}"
+
+
 
 # - name: Build webapp frontend docker image
 #   docker_image:
