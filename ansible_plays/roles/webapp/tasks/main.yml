@@ -5,11 +5,30 @@
   debug:
     msg: "START execution of role/webapp"
 
-- name: Install Git
+- name: Install NodeJS and build tools
   yum:
-    name: "git"
+    name: "{{ packages }}"
     state: "installed"
     update_cache: "yes"
+  vars:
+    packages:
+    - epel-release
+    - gcc
+    - gcc-c++
+    - make
+    - git
+    - nodejs
+
+- name: Install Angular CLI
+  npm:
+    name: "@angular/cli@1.7.4"
+    global: yes
+    state: present
+
+- name: Clean any previous src checkouts
+  file:
+    path: "{{ webapp_paths.src_checkout_dir }}"
+    state: absent
 
 - name: Create webapp source code dir
   file:
@@ -22,6 +41,28 @@
     repo: "{{ webapp_src_repo }}"
     dest: "{{ webapp_paths.src_checkout_dir }}"
 
+# PROCESS webapp configuration templates
+- name: Process webapp config templates
+  template:
+    src: database.js.j2
+    dest: "{{ webapp_paths.src_checkout_dir }}/config/database.js"
+
+- name: Process webapp frontend config templates
+  template:
+    src: auth.services.ts.j2
+    dest: "{{ webapp_paths.src_checkout_dir }}/angular-src/src/app/services/auth.services.ts"
+
+# BUILD and BUNDLE
+- name: Build and Bundle Angular code
+  shell: npm install && ng build --prod
+  args:
+    chdir: "{{ webapp_paths.src_checkout_dir }}/angular-src/"
+
+- name: Clean out Angular build files
+  file:
+    path: "{{ webapp_paths.src_checkout_dir }}/angular-src"
+    state: absent
+
 - name: Create webapp runtime dir
   file:
     path: "{{ webapp_paths.meanauthapp_runtime_dir }}"
@@ -33,10 +74,6 @@
     src: "{{ webapp_paths.src_checkout_dir }}/"
     dest: "{{ webapp_paths.meanauthapp_runtime_dir }}"
 
-- name: Process webapp config templates
-  template:
-    src: database.js.j2
-    dest: "{{ webapp_paths.meanauthapp_runtime_dir }}/config/database.js"
   
 - name: Build webapp docker image
   docker_image:
@@ -59,56 +96,3 @@
     # working_dir: "{{ webapp_paths.meanauthapp_runtime_dir }}"
 
 # --------------------------------
-- name: Install NodeJS and build tools
-  yum:
-    name: "{{ packages }}"
-    state: "installed"
-    update_cache: "yes"
-  vars:
-    packages:
-    - epel-release
-    - gcc
-    - gcc-c++
-    - make
-    - nodejs
-
-- name: Install Angular CLI
-  npm:
-    name: "@angular/cli@1.7.4"
-    global: yes
-    state: present
-
-- name: Process webapp frontend config templates
-  template:
-    src: auth.services.ts.j2
-    dest: "{{ webapp_paths.src_checkout_dir }}/angular-src/src/app/services/auth.services.ts"
-
-- name: Build and Bundle Angular code
-  shell: npm install && ng build --prod --output-path dist
-  args:
-    chdir: "{{ webapp_paths.src_checkout_dir }}/angular-src/"
-
-- name: Create webapp frontend runtime dir
-  file:
-    path: "{{ webapp_paths.frontend_runtime_dir }}"
-    state: directory
-    mode: 0755
-
-- name: Sync webappfrontend dist to runtime dir
-  synchronize:
-    src: "{{ webapp_paths.src_checkout_dir }}/angular-src/dist/"
-    dest: "{{ webapp_paths.frontend_runtime_dir }}"
-
-- name: Start nginx container and mount the webapp frontend
-  docker_container:
-    name: "{{ docker_hosts.meanauthappfrontend }}"
-    image: "{{ docker_images.nginx }}"
-    hostname: "{{ docker_hosts.meanauthappfrontend }}"
-    networks:
-      - name: "{{ docker_network_name }}"
-    expose:
-      - 80
-    ports:
-      - "8080:80"
-    volumes:
-      - "{{ webapp_paths.frontend_runtime_dir }}:/usr/share/nginx/html:ro"      
